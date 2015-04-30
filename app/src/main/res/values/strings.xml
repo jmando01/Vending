@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Vending</string>
+
+    <string name="initial_welcome">Aqui va el logo de la app junto con un mensaje de bienvenida.</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <string name="login_welcome">Aqui va el logo de la app con alguna informacion.</string>
+</resources>
