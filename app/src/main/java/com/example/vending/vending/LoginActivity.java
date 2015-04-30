@@ -44,7 +44,8 @@ public class LoginActivity extends ActionBarActivity {
 
     public void loginbtn(View view){
 
-        if(!(isNetworkConnected())){
+        if(!isNetworkConnected()){
+
             Asycdialog.dismiss();
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
             alertDialogBuilder.setTitle("No Network Avaliable!");
@@ -71,18 +72,31 @@ public class LoginActivity extends ActionBarActivity {
             username = usernameEdit.getText().toString();
             password = passwordEdit.getText().toString();
 
-            if(DBpassword.equals(GetPasswordWithUsername(username))){
+            if(DBpassword.equals(GetPasswordWithUsername(username))){//Next Activity if valid.
+
                 Asycdialog.dismiss();
-                //Next Activity
-            }else{
+
+            }else{//Wrong Credentials
+
                 Asycdialog.dismiss();
-                //Wrong Credentials
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+                alertDialogBuilder.setTitle("Invalid Credentials!");
+                alertDialogBuilder
+                        .setMessage("Your user ID or password is wrong.")
+                        .setCancelable(false)
+                        .setNeutralButton("Got it!",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
             }
         }
-
     }
 
     public String GetPasswordWithUsername(String username){
+        //El proceso para buscar datos en la clave en la base de datos se debe de hacer con el username.
         DBpassword = " ";
 
         return DBpassword;
