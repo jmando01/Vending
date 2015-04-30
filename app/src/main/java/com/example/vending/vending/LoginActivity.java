@@ -35,13 +35,19 @@ public class LoginActivity extends ActionBarActivity {
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
-        // There are no active networks.
-        if (ni == null) return false;
-        else
+        if (ni == null) {
+            // There are no active networks.
+            return false;
+        } else
             return true;
     }
 
     public void loginbtn(View view){
+
+        Asycdialog = new ProgressDialog(LoginActivity.this);
+        Asycdialog.setMessage("Logging In...");
+        Asycdialog.setCanceledOnTouchOutside(false);
+        Asycdialog.show();
 
         if(!isNetworkConnected()){
 
@@ -60,11 +66,6 @@ public class LoginActivity extends ActionBarActivity {
             alertDialog.show();
 
         }else {
-
-            Asycdialog = new ProgressDialog(LoginActivity.this);
-            Asycdialog.setMessage("Logging In...");
-            Asycdialog.setCanceledOnTouchOutside(false);
-            Asycdialog.show();
 
             usernameEdit = (EditText) findViewById(R.id.username);
             passwordEdit = (EditText) findViewById(R.id.password);
