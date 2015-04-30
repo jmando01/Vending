@@ -35,10 +35,9 @@ public class LoginActivity extends ActionBarActivity {
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
-        if (ni == null) {
-            // There are no active networks.
-            return false;
-        } else
+        // There are no active networks.
+        if (ni == null) return false;
+        else
             return true;
     }
 
@@ -72,7 +71,7 @@ public class LoginActivity extends ActionBarActivity {
             username = usernameEdit.getText().toString();
             password = passwordEdit.getText().toString();
 
-            if(DBpassword.equals(GetPasswordWithUsername(username))){//Next Activity if valid.
+            if(password.equals(GetPasswordWithUsername(username))){//Next Activity if valid.
 
                 Asycdialog.dismiss();
 
