@@ -4,14 +4,26 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -20,9 +32,12 @@ public class LoginActivity extends ActionBarActivity {
     private EditText passwordEdit;
     private String username;
     private String password;
-    private String DBpassword;
-    private ProgressDialog Asycdialog;
+    private ProgressDialog pDialog;
     private Context context;
+    JSONParser jsonParser = new JSONParser();
+    private static final String LOGIN_URL = "http://69.64.46.68/login.php";
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +59,8 @@ public class LoginActivity extends ActionBarActivity {
 
     public void loginbtn(View view){
 
-        Asycdialog = new ProgressDialog(LoginActivity.this);
-        Asycdialog.setMessage("Logging In...");
-        Asycdialog.setCanceledOnTouchOutside(false);
-        Asycdialog.show();
-
         if(!isNetworkConnected()){
 
-            Asycdialog.dismiss();
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
             alertDialogBuilder.setTitle("No Network Avaliable!");
             alertDialogBuilder
@@ -66,40 +75,83 @@ public class LoginActivity extends ActionBarActivity {
             alertDialog.show();
 
         }else {
+            new AttemptLogin().execute();
+        }
+    }
+
+    class AttemptLogin extends AsyncTask<String, String, String> {
+
+        /**
+         * Before starting background thread Show Progress Dialog
+         * */
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pDialog = new ProgressDialog(LoginActivity.this);
+            pDialog.setMessage("Attempting login...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... args) {
+            // TODO Auto-generated method stub
+            // Check for success tag
+            int success;
 
             usernameEdit = (EditText) findViewById(R.id.username);
             passwordEdit = (EditText) findViewById(R.id.password);
             username = usernameEdit.getText().toString();
             password = passwordEdit.getText().toString();
 
-            if(password.equals(GetPasswordWithUsername(username))){//Next Activity if valid.
+            try {
+                // Building Parameters
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("userid", username));
+                params.add(new BasicNameValuePair("user_pass", password));
 
-                Asycdialog.dismiss();
+                Log.d("request!", "starting");
+                // getting product details by making HTTP request
+                JSONObject json = jsonParser.makeHttpRequest(
+                        LOGIN_URL, "POST", params);
 
-            }else{//Wrong Credentials
+                // check your log for json response
+                Log.d("Login attempt", json.toString());
 
-                Asycdialog.dismiss();
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                alertDialogBuilder.setTitle("Invalid Credentials!");
-                alertDialogBuilder
-                        .setMessage("Your user ID or password is wrong.")
-                        .setCancelable(false)
-                        .setNeutralButton("Got it!",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
-                                dialog.cancel();
-                            }
-                        });
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
+                // json success tag
+                success = json.getInt(TAG_SUCCESS);
+                if (success == 1) {
+                    Log.d("Login Successful!", json.toString());
+                    //Intent i = new Intent(LoginActivity.this, VendingActivity.class);
+                    //finish();
+                    //startActivity(i);
+                    return json.getString(TAG_MESSAGE);
+                }else{
+                    Log.d("Login Failure!", json.getString(TAG_MESSAGE));
+                    return json.getString(TAG_MESSAGE);
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
+            return null;
+
         }
-    }
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        protected void onPostExecute(String file_url) {
+            // dismiss the dialog once product deleted
+            pDialog.dismiss();
+            if (file_url != null){
+                Toast.makeText(LoginActivity.this, file_url, Toast.LENGTH_LONG).show();
+            }
 
-    public String GetPasswordWithUsername(String username){
-        //El proceso para buscar datos en la clave en la base de datos se debe de hacer con el username.
-        DBpassword = " ";
+        }
 
-        return DBpassword;
     }
 
     @Override
