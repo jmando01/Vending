@@ -10,6 +10,8 @@ import android.view.MenuItem;
 
 public class InitialActivity extends ActionBarActivity {
 
+    private CountDownTimer timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,7 +22,7 @@ public class InitialActivity extends ActionBarActivity {
     protected void onResume(){
         super.onResume();
 
-        new CountDownTimer(3000, 1000) {
+        timer = new CountDownTimer(3000, 1000) {
 
             public void onTick(long millisUntilFinished) {
                // mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
@@ -36,6 +38,11 @@ public class InitialActivity extends ActionBarActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        timer.cancel();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

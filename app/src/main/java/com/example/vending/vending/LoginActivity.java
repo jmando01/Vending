@@ -62,7 +62,7 @@ public class LoginActivity extends ActionBarActivity {
         if(!isNetworkConnected()){
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            alertDialogBuilder.setTitle("No Network Avaliable!");
+            alertDialogBuilder.setTitle("No Network Available!");
             alertDialogBuilder
                     .setMessage("Your device is not connected to the Internet. Please check your connection and try again.")
                     .setCancelable(false)
