@@ -35,7 +35,7 @@ public class LoginActivity extends ActionBarActivity {
     private ProgressDialog pDialog;
     private Context context;
     JSONParser jsonParser = new JSONParser();
-    private static final String LOGIN_URL = "http://69.64.46.68/login.php";
+    private static final String LOGIN_URL = "http://dragon121.startdedicated.com/login.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 
@@ -175,4 +175,5 @@ public class LoginActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
