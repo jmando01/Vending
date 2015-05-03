@@ -34,7 +34,7 @@ public class LoginActivity extends ActionBarActivity {
     private String password;
     private ProgressDialog pDialog;
     private Context context;
-    JSONParser jsonParser = new JSONParser();
+    private JSONParser jsonParser = new JSONParser();
     private static final String LOGIN_URL = "http://dragon121.startdedicated.com/login.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
@@ -124,9 +124,9 @@ public class LoginActivity extends ActionBarActivity {
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
                     Log.d("Login Successful!", json.toString());
-                    //Intent i = new Intent(LoginActivity.this, VendingActivity.class);
-                    //finish();
-                    //startActivity(i);
+                    Intent i = new Intent(LoginActivity.this, VendingActivity.class);
+                    finish();
+                    startActivity(i);
                     return json.getString(TAG_MESSAGE);
                 }else{
                     Log.d("Login Failure!", json.getString(TAG_MESSAGE));
