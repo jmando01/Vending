@@ -18,13 +18,14 @@ public class VendingActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vending);
 
+        VendingList();
     }
 
     public void VendingList(){
 
         String [] status = new String [] {"[Cash] todo a 5", "[Cash] Regalo Cortesia DropingParty", "[Cash] Barato y BonitO", "[Cash] o.o", "[Premium Ticket] dsfhgj", "[Cash] 20 todo"} ;
 
-        ListView listView = (ListView) findViewById(R.id.vendinglv);
+        ListView listView = (ListView) findViewById(R.id.vendingslv);
 
         listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, status));
 
