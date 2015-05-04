@@ -7,4 +7,7 @@
     <string name="title_activity_vending">VendingActivity</string>
 
     <string name="vending_welcome">TU MALDITA MADRE MAMAGUEBO!</string>
+    <string name="title_activity_vending_items">VendingItemsActivity</string>
+
+    <string name="vending_items">Aqui van a estar los items que se venden!</string>
 </resources>

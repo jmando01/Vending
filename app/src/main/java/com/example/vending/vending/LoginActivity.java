@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,6 +39,7 @@ public class LoginActivity extends ActionBarActivity {
     private static final String LOGIN_URL = "http://dragon121.startdedicated.com/login.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+    private long mLastClickTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,13 @@ public class LoginActivity extends ActionBarActivity {
 
     public void loginbtn(View view){
 
+        // mis-clicking prevention, using threshold of 1000 ms
+        if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+            return;
+        }
+
+        mLastClickTime = SystemClock.elapsedRealtime();
+
         if(!isNetworkConnected()){
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -74,8 +83,10 @@ public class LoginActivity extends ActionBarActivity {
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
 
+
         }else {
             new AttemptLogin().execute();
+
         }
     }
 

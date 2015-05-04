@@ -2,6 +2,7 @@ package com.example.vending.vending;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -123,7 +124,7 @@ public class VendingActivity extends ActionBarActivity {
                     vendings.add(Jasonobject.getString("title"));
                 }
 
-                ListView listView = (ListView) findViewById(R.id.vendingslv);
+                final ListView listView = (ListView) findViewById(R.id.vendingslv);
 
                 listView.setAdapter(new ArrayAdapter<String>(VendingActivity.this, android.R.layout.simple_list_item_1, vendings));
 
@@ -132,9 +133,15 @@ public class VendingActivity extends ActionBarActivity {
                                             int position, long id) {
                         // When clicked, show a toast with the TextView text
 
+                        Object o = listView.getItemAtPosition(position);
+                        String title = (String)o;
+
+                        Intent intent = new Intent(VendingActivity.this, VendingItemsActivity.class);
+                        intent.putExtra("VendingTitle", title);
+                        startActivity(intent);
 
                         Toast.makeText(getApplicationContext(),
-                                "Clicked on : " + position, Toast.LENGTH_LONG)
+                                "Clicked on : " + title, Toast.LENGTH_LONG)
                                 .show();
 
 
