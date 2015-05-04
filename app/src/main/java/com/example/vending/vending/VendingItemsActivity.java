@@ -28,9 +28,9 @@ public class VendingItemsActivity extends ActionBarActivity {
         setTitle(vendingTitle);
 
 
-        VendingItem vendingItems = new VendingItem("Viola Pollos","Zeny: 820000",1,"X2");
-        VendingItem vendingItems1 = new VendingItem("Ezreal Favorite","Zeny: 12820000",1,"X1");
-        VendingItem vendingItems2 = new VendingItem("Dildo","Zeny: 2820000",1,"X10");
+        VendingItem vendingItems = new VendingItem("Viola Pollos","Zeny: 820000", 1,"X2");
+        VendingItem vendingItems1 = new VendingItem("Ezreal Favorite","Zeny: 12820000", 1,"X1");
+        VendingItem vendingItems2 = new VendingItem("Dildo","Zeny: 2820000", 1,"X10 ");
 
 
         ArrayList<VendingItem> results = new ArrayList<VendingItem>();
@@ -50,7 +50,7 @@ public class VendingItemsActivity extends ActionBarActivity {
                 VendingItem item = (VendingItem)o;
 
                 Toast.makeText(getApplicationContext(),
-                        "Clicked on : " + item, Toast.LENGTH_LONG)
+                        "Clicked on : " + item.getItemName(), Toast.LENGTH_LONG)
                         .show();
 
                 //Intent intent = new Intent(v.getContext(), ChatEntryActivity.class);
