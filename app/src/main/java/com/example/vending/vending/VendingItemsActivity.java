@@ -1,5 +1,7 @@
 package com.example.vending.vending;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -53,10 +55,19 @@ public class VendingItemsActivity extends ActionBarActivity {
                         "Clicked on : " + item.getItemName(), Toast.LENGTH_LONG)
                         .show();
 
-                //Intent intent = new Intent(v.getContext(), ChatEntryActivity.class);
-                //intent.putExtra("remoteUsername", obj_itemDetails.getName());
-                //intent.putExtra("priva", obj_itemDetails.isPrivate());
-                //startActivity(intent);
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VendingItemsActivity.this);
+                alertDialogBuilder.setTitle("Confirm Item ");
+                alertDialogBuilder
+                        .setIcon(R.drawable.roimage)
+                        .setMessage("Item: " + item.getItemName() +".\n" + item.getItemPrice() + ".")
+                        .setCancelable(false)
+                        .setNeutralButton("Buy Item!",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
             }
         });
 
