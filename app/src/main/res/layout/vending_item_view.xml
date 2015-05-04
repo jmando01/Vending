@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <ImageView
+        android:id="@+id/itemImage"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginRight="8dp" />
+
+    <TextView
+        android:id="@+id/itemName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/itemImage"
+        android:layout_toRightOf="@+id/itemImage"
+        android:textSize="17dp"
+        android:textStyle="bold"
+        android:text="The Machinist"/>
+
+    <TextView
+        android:id="@+id/itemPrice"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/itemName"
+        android:layout_marginTop="1dip"
+        android:layout_toRightOf="@+id/itemImage"
+        android:textSize="15dip"
+        android:text="Zeny: 820000"/>
+
+    <TextView
+        android:id="@+id/itemCounter"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/itemPrice"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/itemImage"
+        android:textColor="#666666"
+        android:textSize="13dip"
+        android:text="X2"/>
+
+</RelativeLayout>
