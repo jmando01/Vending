@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,19 +23,25 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class VendingActivity extends ActionBarActivity {
 
-    private ArrayList<String> vendings = new ArrayList<>();
-    private int account_id;
+    private ArrayList<Vending> vendings;
+    private JSONParser jsonParser = new JSONParser();
+    private JSONObject jObj = null;
+    public static VendingBaseAdapter adapter = null;
+    private static final String VENDINGS_URL = "http://dragon121.startdedicated.com/vendings.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +51,19 @@ public class VendingActivity extends ActionBarActivity {
         new getVendings().execute();
     }
 
-    class getVendings extends AsyncTask<String, String, Void> {
-        private ProgressDialog progressDialog = new ProgressDialog(VendingActivity.this);
-        InputStream is = null ;
-        String result = "";
+    class getVendings extends AsyncTask<String, String, String> {
+
+        private ProgressDialog pDialog = new ProgressDialog(VendingActivity.this);
+
+        @Override
         protected void onPreExecute() {
+            super.onPreExecute();
 
-
-            progressDialog.setMessage("Loading Vendings...");
-            progressDialog.show();
-            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            pDialog.setMessage("Attempting login...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+            pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
                 @Override
                 public void onCancel(DialogInterface arg0) {
 
@@ -63,97 +73,78 @@ public class VendingActivity extends ActionBarActivity {
         }
 
         @Override
-        protected Void doInBackground(String... params) {
-
-            String url_select = "http://dragon121.startdedicated.com/vendings.php";
-
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(url_select);
-
-            ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
+        protected String doInBackground(String... args) {
 
             try {
+                // Building Parameters
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-                httpPost.setEntity(new UrlEncodedFormEntity(param));
+                Log.d("request!", "starting");
+                // getting product details by making HTTP request
+                String json = jsonParser.makeHttpRequest(
+                        VENDINGS_URL, "POST", params);
 
-                HttpResponse httpResponse = httpClient.execute(httpPost);
-                HttpEntity httpEntity = httpResponse.getEntity();
+                // check your log for json response
+                Log.d("Vendings", json.toString());
 
-                //read content
-                is =  httpEntity.getContent();
-
-            } catch (Exception e) {
-
-                Log.e("log_tag", "Error in http connection " + e.toString());
-            }
-
-            try {
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                StringBuilder sb = new StringBuilder();
-                String line = "";
-                while((line=br.readLine())!=null) {
-
-                    sb.append(line+"\n");
-                }
-
-                is.close();
-                result=sb.toString();
+                return json;
 
             } catch (Exception e) {
-
-                // TODO: handle exception
-                Log.e("log_tag", "Error converting result "+e.toString());
+                e.printStackTrace();
             }
 
             return null;
-
         }
 
-        protected void onPostExecute(Void v) {
+        protected void onPostExecute(String json) {
+            // dismiss the dialog once product deleted
+            if (json != null){
+                vendings = new ArrayList<>();
+                try {
 
-            vendings = new ArrayList<>();
-
-            try {
-
-                JSONArray Jarray = new JSONArray(result);
-                for(int i=0;i<Jarray.length();i++) {
-                    JSONObject Jasonobject = null;
-                    Jasonobject = Jarray.getJSONObject(i);
-                    vendings.add(Jasonobject.getString("title"));
-                }
-
-                final ListView listView = (ListView) findViewById(R.id.vendingslv);
-
-                listView.setAdapter(new ArrayAdapter<String>(VendingActivity.this, android.R.layout.simple_list_item_1, vendings));
-
-                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> parent, View view,
-                                            int position, long id) {
-                        // When clicked, show a toast with the TextView text
-
-                        Object o = listView.getItemAtPosition(position);
-                        String title = (String)o;
-
-                        Intent intent = new Intent(VendingActivity.this, VendingItemsActivity.class);
-                        intent.putExtra("VendingTitle", title);
-                        startActivity(intent);
-
-                        Toast.makeText(getApplicationContext(),
-                                "Clicked on : " + title, Toast.LENGTH_LONG)
-                                .show();
-
-
+                    JSONArray Jarray = new JSONArray(json);
+                    for(int i = 0; i < Jarray.length(); i++) {
+                        jObj = new JSONObject();
+                        jObj = Jarray.getJSONObject(i);
+                        Vending vending = new Vending(jObj.getString("title"), jObj.getString("currency"), jObj.getString("id") );
+                        vendings.add(vending);
                     }
-                });
 
-                this.progressDialog.dismiss();
+                    final ListView listView = (ListView) findViewById(R.id.vendingslv);
+                    adapter = new VendingBaseAdapter(VendingActivity.this, vendings);
+                    listView.setAdapter(adapter);
 
-            } catch (Exception e) {
-                // TODO: handle exception
-                this.progressDialog.dismiss();
-                Log.e("log_tag", "Error parsing data "+e.toString());
+                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        public void onItemClick(AdapterView<?> parent, View view,
+                                                int position, long id) {
+                            // When clicked, show a toast with the TextView text
+
+                            Object o = listView.getItemAtPosition(position);
+                            Vending vending = (Vending) o;
+
+                            Intent intent = new Intent(VendingActivity.this, VendingItemActivity.class);
+                            intent.putExtra("VendingTitle", vending.getVendingName());
+                            intent.putExtra("ID", vending.getVendingID());
+                            startActivity(intent);
+
+                            Toast.makeText(getApplicationContext(),
+                                    "Clicked on : " + vending.getVendingName(), Toast.LENGTH_LONG)
+                                    .show();
+
+                        }
+                    });
+
+                    this.pDialog.dismiss();
+
+                } catch (Exception e) {
+                    // TODO: handle exception
+                    this.pDialog.dismiss();
+                    Log.e("log_tag", "Error parsing data "+e.toString());
+                }
             }
+
         }
+
     }
 
     public void refreshBtn(MenuItem item){

@@ -5,50 +5,39 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 
 /**
- * Created by Joubert on 03/05/2015.
+ * Created by Joubert on 06/05/2015.
  */
 public class VendingBaseAdapter  extends BaseAdapter {
 
-    private static ArrayList<VendingItem> vendingItemArrayList;
-
-    private Integer[] imgid = {
-            R.drawable.roimage,
-            //R.drawable.ic_priva,
-            //R.drawable.p2,
-            //R.drawable.bb5,
-            //R.drawable.bb6,
-            //R.drawable.d1
-    };
+    private static ArrayList<Vending> vendingArrayList;
 
     private LayoutInflater l_Inflater;
 
-    public VendingBaseAdapter(Context context, ArrayList<VendingItem> results) {
-        vendingItemArrayList = results;
+    public VendingBaseAdapter(Context context, ArrayList<Vending> results) {
+        vendingArrayList = results;
         l_Inflater = LayoutInflater.from(context);
     }
 
-    public void removeItem(VendingItem item){
-        vendingItemArrayList.remove(item);
+    public void removeItem(Vending vending){
+        vendingArrayList.remove(vending);
         notifyDataSetChanged();
     }
 
-    public void addItem(VendingItem item) {
-        vendingItemArrayList.add(item);
+    public void addItem(Vending vending) {
+        vendingArrayList.add(vending);
         notifyDataSetChanged();
     }
 
     public int getCount() {
-        return vendingItemArrayList.size();
+        return vendingArrayList.size();
     }
 
     public Object getItem(int position) {
-        return vendingItemArrayList.get(position);
+        return vendingArrayList.get(position);
     }
 
     public long getItemId(int position) {
@@ -58,32 +47,23 @@ public class VendingBaseAdapter  extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = l_Inflater.inflate(R.layout.vending_item_view, null);
+            convertView = l_Inflater.inflate(R.layout.vending_view, null);
             holder = new ViewHolder();
-            holder.txt_itemName = (TextView) convertView.findViewById(R.id.itemName);
-            holder.txt_itemPrice = (TextView) convertView.findViewById(R.id.itemPrice);
-            holder.txt_itemCounter = (TextView) convertView.findViewById(R.id.itemCounter);
-           holder.itemImage = (ImageView) convertView.findViewById(R.id.itemImage);
+            holder.txt_vendingName = (TextView) convertView.findViewById(R.id.vendingName);
 
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.txt_itemName.setText((vendingItemArrayList.get(position).getItemName()));
-        holder.txt_itemPrice.setText(vendingItemArrayList.get(position).getItemPrice());
-        holder.txt_itemCounter.setText(vendingItemArrayList.get(position).getItemCounter());
-        holder.itemImage.setImageResource(imgid[vendingItemArrayList.get(position).getItemImage() - 1]);
-        //holder.itemImage.setImageBitmap(Bitmap.createScaledBitmap(Connect.db.getPhotoDBByUserName(itemDetailsrrayList.get(position).getName()).getPhoto(), 125, 125, false));
+        holder.txt_vendingName.setText((vendingArrayList.get(position).getVendingName()));
 
         return convertView;
     }
 
     static class ViewHolder {
-        TextView txt_itemCounter;
-        TextView txt_itemName;
-        TextView txt_itemPrice;
-        ImageView itemImage;
+        TextView txt_vendingName;
     }
 
 }
+

@@ -37,6 +37,7 @@ public class LoginActivity extends ActionBarActivity {
     private static final String LOGIN_URL = "http://dragon121.startdedicated.com/login.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+    private static JSONObject jObj = null;
 
     private Context context;
     private JSONParser jsonParser = new JSONParser();
@@ -131,23 +132,30 @@ public class LoginActivity extends ActionBarActivity {
 
                 Log.d("request!", "starting");
                 // getting product details by making HTTP request
-                JSONObject json = jsonParser.makeHttpRequest(
+                String json = jsonParser.makeHttpRequest(
                         LOGIN_URL, "POST", params);
+
+                // try parse the string to a JSON object
+                try {
+                    jObj = new JSONObject(json);
+                } catch (JSONException e) {
+                    Log.e("JSON Parser", "Error parsing data " + e.toString());
+                }
 
                 // check your log for json response
                 Log.d("Login attempt", json.toString());
 
                 // json success tag
-                success = json.getInt(TAG_SUCCESS);
+                success = jObj.getInt(TAG_SUCCESS);
                 if (success == 1) {
-                    Log.d("Login Successful!", json.toString());
+                    Log.d("Login Successful!", jObj.toString());
                     Intent intent = new Intent(LoginActivity.this, VendingActivity.class);
                     finish();
                     startActivity(intent);
-                    return json.getString(TAG_MESSAGE);
+                    return jObj.getString(TAG_MESSAGE);
                 }else{
-                    Log.d("Login Failure!", json.getString(TAG_MESSAGE));
-                    return json.getString(TAG_MESSAGE);
+                    Log.d("Login Failure!", jObj.getString(TAG_MESSAGE));
+                    return jObj.getString(TAG_MESSAGE);
 
                 }
             } catch (JSONException e) {

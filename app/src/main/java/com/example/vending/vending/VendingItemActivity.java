@@ -15,9 +15,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class VendingItemsActivity extends ActionBarActivity {
+public class VendingItemActivity extends ActionBarActivity {
     private String vendingTitle;
-    public static VendingBaseAdapter adapter = null;
+    public static VendingItemBaseAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class VendingItemsActivity extends ActionBarActivity {
         results.add(vendingItems2);
 
         final ListView lv1 = (ListView) findViewById(R.id.vendingItemLv);
-        adapter = new VendingBaseAdapter(this, results);
+        adapter = new VendingItemBaseAdapter(this, results);
         lv1.setAdapter(adapter);
 
         lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -55,7 +55,7 @@ public class VendingItemsActivity extends ActionBarActivity {
                         "Clicked on : " + item.getItemName(), Toast.LENGTH_LONG)
                         .show();
 
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VendingItemsActivity.this);
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VendingItemActivity.this);
                 alertDialogBuilder.setTitle("Confirm Item ");
                 alertDialogBuilder
                         .setIcon(R.drawable.roimage)

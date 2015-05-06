@@ -29,8 +29,8 @@
             android:label="@string/title_activity_vending" >
         </activity>
         <activity
-            android:name=".VendingItemsActivity"
-            android:label="@string/title_activity_vending_items" >
+            android:name=".VendingItemActivity"
+            android:label="@string/title_activity_vending_item" >
         </activity>
     </application>
 
