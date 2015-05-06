@@ -59,7 +59,7 @@ public class VendingActivity extends ActionBarActivity {
         protected void onPreExecute() {
             super.onPreExecute();
 
-            pDialog.setMessage("Attempting login...");
+            pDialog.setMessage("Getting Vendings...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
@@ -97,7 +97,7 @@ public class VendingActivity extends ActionBarActivity {
         }
 
         protected void onPostExecute(String json) {
-            // dismiss the dialog once product deleted
+
             if (json != null){
                 vendings = new ArrayList<>();
                 try {
@@ -123,8 +123,8 @@ public class VendingActivity extends ActionBarActivity {
                             Vending vending = (Vending) o;
 
                             Intent intent = new Intent(VendingActivity.this, VendingItemActivity.class);
-                            intent.putExtra("VendingTitle", vending.getVendingName());
-                            intent.putExtra("ID", vending.getVendingID());
+                            intent.putExtra("vendingTitle", vending.getVendingName());
+                            intent.putExtra("vendingID", vending.getVendingID());
                             startActivity(intent);
 
                             Toast.makeText(getApplicationContext(),
@@ -139,7 +139,7 @@ public class VendingActivity extends ActionBarActivity {
                 } catch (Exception e) {
                     // TODO: handle exception
                     this.pDialog.dismiss();
-                    Log.e("log_tag", "Error parsing data "+e.toString());
+                    Log.e("Vending", "Error parsing data "+e.toString());
                 }
             }
 

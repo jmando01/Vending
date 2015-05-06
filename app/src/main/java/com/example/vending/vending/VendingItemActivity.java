@@ -1,22 +1,37 @@
 package com.example.vending.vending;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class VendingItemActivity extends ActionBarActivity {
     private String vendingTitle;
+    private String vendingID;
+    private JSONParser jsonParser = new JSONParser();
+    private JSONObject jObj = null;
+    private static final String VENDING_ITEMS_URL = "http://dragon121.startdedicated.com/vending_items.php";
     public static VendingItemBaseAdapter adapter = null;
 
     @Override
@@ -25,62 +40,131 @@ public class VendingItemActivity extends ActionBarActivity {
         setContentView(R.layout.activity_vending_items);
 
         Intent intent = getIntent();
-        vendingTitle = intent.getStringExtra("VendingTitle");
+        vendingTitle = intent.getStringExtra("vendingTitle");
+        vendingID = intent.getStringExtra("vendingID");
+        Log.d("Vending ID", vendingID);
 
         setTitle(vendingTitle);
 
+        new getVendingItems().execute();
+    }
 
-        VendingItem vendingItems = new VendingItem("Viola Pollos","Zeny: 820000", 1,"X2");
-        VendingItem vendingItems1 = new VendingItem("Ezreal Favorite","Zeny: 12820000", 1,"X1");
-        VendingItem vendingItems2 = new VendingItem("Dildo","Zeny: 2820000", 1,"X10 ");
+    class getVendingItems extends AsyncTask<String, String, String> {
+
+        private ProgressDialog pDialog = new ProgressDialog(VendingItemActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            pDialog.setMessage("Getting Items...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+            pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface arg0) {
+
+                    getVendingItems.this.cancel(true);
+                }
+            });
+        }
+
+        @Override
+        protected String doInBackground(String... args) {
+
+            try {
+                // Building Parameters
+                List<NameValuePair> params = new ArrayList<NameValuePair>();
+                params.add(new BasicNameValuePair("vending_id", vendingID));
 
 
-        ArrayList<VendingItem> results = new ArrayList<VendingItem>();
-        results.add(vendingItems);
-        results.add(vendingItems1);
-        results.add(vendingItems2);
+                Log.d("request!", "starting");
+                // getting product details by making HTTP request
+                String json = jsonParser.makeHttpRequest(
+                        VENDING_ITEMS_URL, "POST", params);
 
-        final ListView lv1 = (ListView) findViewById(R.id.vendingItemLv);
-        adapter = new VendingItemBaseAdapter(this, results);
-        lv1.setAdapter(adapter);
 
-        lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+                // check your log for json response
+                Log.d("Getting Items", json.toString());
 
-                Object o = lv1.getItemAtPosition(position);
-                VendingItem item = (VendingItem)o;
+                return json;
 
-                Toast.makeText(getApplicationContext(),
-                        "Clicked on : " + item.getItemName(), Toast.LENGTH_LONG)
-                        .show();
-
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VendingItemActivity.this);
-                alertDialogBuilder.setTitle("Confirm Item ");
-                alertDialogBuilder
-                        .setIcon(R.drawable.roimage)
-                        .setMessage("Item: " + item.getItemName() + ".\n" + item.getItemPrice() + ".")
-                        .setCancelable(false)
-                        .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        })
-                        .setPositiveButton("Buy Item!", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
 
+            return null;
+
+        }
+        /**
+         * After completing background task Dismiss the progress dialog
+         * **/
+        protected void onPostExecute(String json) {
+            // dismiss the dialog once product deleted
+            pDialog.dismiss();
+            if (json != null){
+                ArrayList<VendingItem> vendingItems = new ArrayList<VendingItem>();
+
+                try {
+
+                    JSONArray Jarray = new JSONArray(json);
+                    for(int i = 0; i < Jarray.length(); i++) {
+                        jObj = new JSONObject();
+                        jObj = Jarray.getJSONObject(i);
+                        VendingItem vendingItem = new VendingItem(jObj.getString("name"),"Price: " + jObj.getString("price"), 1, "Amount: "  + jObj.getString("amount") );
+                        vendingItems.add(vendingItem);
+                    }
+
+                    final ListView lv1 = (ListView) findViewById(R.id.vendingItemLv);
+                    adapter = new VendingItemBaseAdapter(VendingItemActivity.this, vendingItems);
+                    lv1.setAdapter(adapter);
+
+                    lv1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> a, View v, int position, long id) {
+
+                            Object o = lv1.getItemAtPosition(position);
+                            VendingItem item = (VendingItem)o;
+
+                            Toast.makeText(getApplicationContext(),
+                                    "Clicked on : " + item.getItemName(), Toast.LENGTH_LONG)
+                                    .show();
+
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VendingItemActivity.this);
+                            alertDialogBuilder.setTitle("Confirm Item ");
+                            alertDialogBuilder
+                                    .setIcon(R.drawable.roimage)
+                                    .setMessage("Item: " + item.getItemName() + ".\n" + item.getItemPrice() + ".")
+                                    .setCancelable(false)
+                                    .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    })
+                                    .setPositiveButton("Buy Item!", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                            AlertDialog alertDialog = alertDialogBuilder.create();
+                            alertDialog.show();
+                        }
+                    });
+            }catch (Exception e){
+                    // TODO: handle exception
+                    this.pDialog.dismiss();
+                    Log.e("VendingItemActivity", "Error parsing data "+e.toString());
+                }
+            }
+
+        }
 
     }
 
-    public void refreshBtn(){
+
+    public void refreshBtn(MenuItem item){
         startActivity(getIntent());
         finish();
     }

@@ -4,4 +4,11 @@
     tools:context="com.example.vending.vending.VendingItemsActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item
+        android:id="@+id/refresh"
+        android:orderInCategory="1"
+        android:onClick="refreshBtn"
+        android:title="refresh"
+        android:icon="@drawable/refresh"
+        app:showAsAction="always"/>
 </menu>

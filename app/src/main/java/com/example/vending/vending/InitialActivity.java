@@ -35,7 +35,6 @@ public class InitialActivity extends ActionBarActivity {
                 //mTextField.setText("done!");
             }
         }.start();
-
     }
 
     @Override

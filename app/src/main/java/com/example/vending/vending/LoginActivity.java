@@ -139,7 +139,7 @@ public class LoginActivity extends ActionBarActivity {
                 try {
                     jObj = new JSONObject(json);
                 } catch (JSONException e) {
-                    Log.e("JSON Parser", "Error parsing data " + e.toString());
+                    Log.e("JSON Object", "Error parsing data " + e.toString());
                 }
 
                 // check your log for json response
@@ -176,6 +176,12 @@ public class LoginActivity extends ActionBarActivity {
             }
 
         }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
     }
 
