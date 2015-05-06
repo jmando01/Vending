@@ -39,8 +39,9 @@ public class InitialActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         timer.cancel();
+        super.onBackPressed();
+
     }
 
     @Override

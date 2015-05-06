@@ -7,12 +7,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -133,7 +136,17 @@ public class VendingItemActivity extends ActionBarActivity {
 
                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VendingItemActivity.this);
                             alertDialogBuilder.setTitle("Confirm Item ");
+
+                            LinearLayout lila1= new LinearLayout(VendingItemActivity.this);
+                            lila1.setOrientation(LinearLayout.VERTICAL);
+                            final EditText input = new EditText(VendingItemActivity.this);
+                            input.setHint("Type 'confirm' to buy item");
+                            input.setGravity(Gravity.CENTER );
+                            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+                            lila1.addView(input);
+
                             alertDialogBuilder
+                                    .setView(lila1)
                                     .setIcon(R.drawable.roimage)
                                     .setMessage("Item: " + item.getItemName() + ".\n" + item.getItemPrice() + ".")
                                     .setCancelable(false)
@@ -144,7 +157,14 @@ public class VendingItemActivity extends ActionBarActivity {
                                     })
                                     .setPositiveButton("Buy Item!", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
+                                            if(input.getText().toString().toLowerCase().equals("confirm")){
+                                                Toast.makeText(VendingItemActivity.this, "Item bought confirmed", Toast.LENGTH_LONG).show();
+                                                dialog.cancel();
+                                            }else{
+                                                Toast.makeText(VendingItemActivity.this, "Item bought denied, please type 'confirm' to buy item.", Toast.LENGTH_LONG).show();
+                                                dialog.cancel();
+                                            }
+
                                         }
                                     });
 
