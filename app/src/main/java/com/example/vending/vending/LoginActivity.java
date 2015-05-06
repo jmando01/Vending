@@ -33,12 +33,13 @@ public class LoginActivity extends ActionBarActivity {
     private EditText passwordEdit;
     private String username;
     private String password;
-    private ProgressDialog pDialog;
-    private Context context;
-    private JSONParser jsonParser = new JSONParser();
+
     private static final String LOGIN_URL = "http://dragon121.startdedicated.com/login.php";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
+
+    private Context context;
+    private JSONParser jsonParser = new JSONParser();
     private long mLastClickTime;
 
     @Override
@@ -92,18 +93,23 @@ public class LoginActivity extends ActionBarActivity {
 
     class AttemptLogin extends AsyncTask<String, String, String> {
 
-        /**
-         * Before starting background thread Show Progress Dialog
-         * */
+        private ProgressDialog pDialog = new ProgressDialog(LoginActivity.this);
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(LoginActivity.this);
+
             pDialog.setMessage("Attempting login...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
+            pDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface arg0) {
+
+                    AttemptLogin.this.cancel(true);
+                }
+            });
         }
 
         @Override
@@ -135,9 +141,9 @@ public class LoginActivity extends ActionBarActivity {
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
                     Log.d("Login Successful!", json.toString());
-                    Intent i = new Intent(LoginActivity.this, VendingActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, VendingActivity.class);
                     finish();
-                    startActivity(i);
+                    startActivity(intent);
                     return json.getString(TAG_MESSAGE);
                 }else{
                     Log.d("Login Failure!", json.getString(TAG_MESSAGE));

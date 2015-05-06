@@ -33,17 +33,18 @@ import java.util.ArrayList;
 
 public class VendingActivity extends ActionBarActivity {
 
-    ArrayList<String> vendings = new ArrayList<>();
+    private ArrayList<String> vendings = new ArrayList<>();
+    private int account_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vending);
 
-        new task().execute();
+        new getVendings().execute();
     }
 
-    class task extends AsyncTask<String, String, Void> {
+    class getVendings extends AsyncTask<String, String, Void> {
         private ProgressDialog progressDialog = new ProgressDialog(VendingActivity.this);
         InputStream is = null ;
         String result = "";
@@ -53,14 +54,11 @@ public class VendingActivity extends ActionBarActivity {
             progressDialog.setMessage("Loading Vendings...");
             progressDialog.show();
             progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-
                 @Override
                 public void onCancel(DialogInterface arg0) {
 
-                    task.this.cancel(true);
-
+                    getVendings.this.cancel(true);
                 }
-
             });
         }
 
@@ -156,6 +154,11 @@ public class VendingActivity extends ActionBarActivity {
                 Log.e("log_tag", "Error parsing data "+e.toString());
             }
         }
+    }
+
+    public void refreshBtn(MenuItem item){
+        startActivity(getIntent());
+        finish();
     }
 
 

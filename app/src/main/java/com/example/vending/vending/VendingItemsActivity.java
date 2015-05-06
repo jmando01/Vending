@@ -59,13 +59,19 @@ public class VendingItemsActivity extends ActionBarActivity {
                 alertDialogBuilder.setTitle("Confirm Item ");
                 alertDialogBuilder
                         .setIcon(R.drawable.roimage)
-                        .setMessage("Item: " + item.getItemName() +".\n" + item.getItemPrice() + ".")
+                        .setMessage("Item: " + item.getItemName() + ".\n" + item.getItemPrice() + ".")
                         .setCancelable(false)
-                        .setNeutralButton("Buy Item!",new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
+                        .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton("Buy Item!", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
                         });
+
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
             }
@@ -74,6 +80,10 @@ public class VendingItemsActivity extends ActionBarActivity {
 
     }
 
+    public void refreshBtn(){
+        startActivity(getIntent());
+        finish();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
