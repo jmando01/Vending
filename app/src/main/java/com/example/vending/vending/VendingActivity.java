@@ -160,7 +160,7 @@ public class VendingActivity extends ActionBarActivity {
     public void onBackPressed() {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(VendingActivity.this);
-        alertDialogBuilder.setTitle("Confirm Item ");
+        alertDialogBuilder.setTitle("You're about to exit ROMP ");
         alertDialogBuilder
                 .setMessage("Are you sure you want to exit ROMP?")
                 .setCancelable(false)
