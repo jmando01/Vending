@@ -36,6 +36,7 @@ public class VendingItemActivity extends ActionBarActivity {
     private JSONObject jObj = null;
     private static final String VENDING_ITEMS_URL = "http://dragon121.startdedicated.com/vending_items.php";
     public static VendingItemBaseAdapter adapter = null;
+    private String amount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +129,7 @@ public class VendingItemActivity extends ActionBarActivity {
                         public void onItemClick(AdapterView<?> a, View v, int position, long id) {
 
                             Object o = lv1.getItemAtPosition(position);
-                            VendingItem item = (VendingItem)o;
+                            final VendingItem item = (VendingItem)o;
 
                             Toast.makeText(getApplicationContext(),
                                     "Clicked on : " + item.getItemName(), Toast.LENGTH_LONG)
@@ -139,16 +140,25 @@ public class VendingItemActivity extends ActionBarActivity {
 
                             LinearLayout lila1= new LinearLayout(VendingItemActivity.this);
                             lila1.setOrientation(LinearLayout.VERTICAL);
-                            final EditText input = new EditText(VendingItemActivity.this);
-                            input.setHint("Type 'confirm' to buy item");
-                            input.setGravity(Gravity.CENTER );
-                            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-                            lila1.addView(input);
+
+                            final EditText inputConfirm = new EditText(VendingItemActivity.this);
+                            inputConfirm.setHint("Type 'confirm' to buy item");
+                            inputConfirm.setGravity(Gravity.CENTER);
+                            inputConfirm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+                            inputConfirm.setText("confirm");
+
+                            final EditText inputAmount = new EditText(VendingItemActivity.this);
+                            inputAmount.setHint("Amount of items");
+                            inputAmount.setGravity(Gravity.CENTER);
+                            inputAmount.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_NUMBER);
+
+                            lila1.addView(inputAmount);
+                            lila1.addView(inputConfirm);
 
                             alertDialogBuilder
                                     .setView(lila1)
                                     .setIcon(R.drawable.roimage)
-                                    .setMessage("Item: " + item.getItemName() + ".\n" + item.getItemPrice() + ".")
+                                    .setMessage("Item: " + item.getItemName() + ".\n" + item.getItemPrice() + ".\n" + item.getItemCounter() + ".")
                                     .setCancelable(false)
                                     .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
@@ -157,14 +167,25 @@ public class VendingItemActivity extends ActionBarActivity {
                                     })
                                     .setPositiveButton("Buy Item!", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            if(input.getText().toString().toLowerCase().equals("confirm")){
-                                                Toast.makeText(VendingItemActivity.this, "Item bought confirmed", Toast.LENGTH_LONG).show();
-                                                dialog.cancel();
+                                            if(isNumeric(inputAmount.getText().toString())){
+                                                if(Integer.parseInt(inputAmount.getText().toString()) <= Integer.parseInt(item.getItemCounter().substring(8)) && Integer.parseInt(inputAmount.getText().toString()) > 0){
+                                                    if(inputConfirm.getText().toString().toLowerCase().equals("confirm")){
+                                                        Toast.makeText(VendingItemActivity.this, "Item bought confirmed", Toast.LENGTH_LONG).show();
+                                                        amount = inputAmount.getText().toString();
+                                                        //Aqui se haran las demas cosas que tienen que ver ocn la compra.
+                                                        dialog.cancel();
+                                                    }else{
+                                                        Toast.makeText(VendingItemActivity.this, "Item bought denied, please type 'confirm' to buy item.", Toast.LENGTH_LONG).show();
+                                                        dialog.cancel();
+                                                    }
+                                                }else{
+                                                    Toast.makeText(VendingItemActivity.this, "You typed an invalid amount. Please try again.", Toast.LENGTH_LONG).show();
+                                                    dialog.cancel();
+                                                }
                                             }else{
-                                                Toast.makeText(VendingItemActivity.this, "Item bought denied, please type 'confirm' to buy item.", Toast.LENGTH_LONG).show();
+                                                Toast.makeText(VendingItemActivity.this, "You typed an invalid amount. Please try again.", Toast.LENGTH_LONG).show();
                                                 dialog.cancel();
                                             }
-
                                         }
                                     });
 
@@ -183,6 +204,14 @@ public class VendingItemActivity extends ActionBarActivity {
 
     }
 
+    public boolean isNumeric(String isNumber){
+        try {
+            int temp = Integer.parseInt(isNumber);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
     public void refreshBtn(MenuItem item){
         startActivity(getIntent());

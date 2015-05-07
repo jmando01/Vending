@@ -164,7 +164,7 @@ public class VendingActivity extends ActionBarActivity {
         alertDialogBuilder
                 .setMessage("Are you sure you want to exit ROMP?")
                 .setCancelable(false)
-                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNeutralButton("  Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
